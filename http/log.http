@@ -1,0 +1,30 @@
+@baseURL = "http://localhost:9999/api";
+
+### 飞书消息推送
+POST https://open.feishu.cn/open-apis/bot/v2/hook/4327e8a3-e70d-45b6-9fa6-d0593926026e
+Content-Type: application/json
+
+{
+  "msg_type": "text",
+  "content": {
+    "text": "你好"
+  }
+}
+
+### 日志上报
+POST {{baseURL}}upload/log
+Content-Type: application/json
+
+{
+  "appid":"sheet-h5",
+  "content":"上报日志。。。。。。内容"
+}
+
+### 查询log列表数据
+GET {{baseURL}}upload/log
+
+### 根据log文件名,查询文件内容
+GET {{baseURL}}upload/log?fileName=2023-03-21 17:27:03.log
+
+
+
