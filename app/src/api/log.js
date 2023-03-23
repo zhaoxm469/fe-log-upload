@@ -1,5 +1,3 @@
 import { get } from ".";
 
-export const getLogApi = (data) => {
-  return get('/upload/log', data);
-}
+export const getLogApi = params => get('/upload/log', params);

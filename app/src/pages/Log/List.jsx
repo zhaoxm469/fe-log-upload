@@ -1,28 +1,35 @@
 import { Table, Button, Space, Pagination,DatePicker } from "antd";
 import React, { useEffect, useState } from "react";
 import { getLogApi } from "@/api/log";
+import { Container } from "@/components/Container";
+import { Link } from "react-router-dom";
 
 const ListPage = () => {
   const [dataSource, setDataSource] = useState([]);
   const [total, setTotal] = useState(0);
-  const [searchText, setSearchText] = useState("");
+  const [timerRange, setTimerRange] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const [columns, setColumns] = useState([
+  const [columns] = useState([
     {
       title: '文件名',
       dataIndex: 'name',
-      key: 'name',
       render: (text) => {
-        return <a onClick={()=>alert(2)}>{text}</a>
+        return <Link to="/log/detail" state={{fileName:text}}>{text}</Link>
       },
     }
   ]);
 
   const fetchData = async () => {
     try {
-      const { total,list } = await getLogApi()
+      const [dateStart,dateEnd] = timerRange || []
+      const { total,list } = await getLogApi({
+        page: currentPage,
+        size: pageSize,
+        dateStart,
+        dateEnd
+      })
       setDataSource(list);
       setTotal(total);
     } catch (error) {
@@ -32,7 +39,7 @@ const ListPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage, pageSize, searchText]);
+  }, [currentPage, pageSize,timerRange ]);
 
   const handleSearch = () => {
     setCurrentPage(1);
@@ -45,15 +52,15 @@ const ListPage = () => {
   };
 
   return (
-    <>
+    <Container>
       <Space className="flex justify-end pb-4">
         <DatePicker.RangePicker 
-          onSearch={(value) => setSearchText(value)}
+          onChange={(value) => setTimerRange(value)}
           placeholder={['开始时间', '结束时间']}
         />
         <Button onClick={handleSearch}>查询</Button>
       </Space>
-      <Table dataSource={dataSource} pagination={false} columns={columns} />
+      <Table dataSource={dataSource} pagination={false} columns={columns} rowKey="name" />
       <div className="pt-4 justify-end flex">
         <Pagination
           total={total}
@@ -64,7 +71,7 @@ const ListPage = () => {
           onShowSizeChange={handlePageChange}
         />
       </div>
-    </>
+    </Container>
   );
 };
 
